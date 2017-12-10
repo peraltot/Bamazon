@@ -12,7 +12,7 @@ var connection = mysql.createConnection({
   database: "bamazon"
 });
 
-connection.connect(function(err) {
+connection.connect(function (err) {
   if (err) throw err;
   console.log("connected as id " + connection.threadId);
   queryAllProducts();
@@ -20,7 +20,7 @@ connection.connect(function(err) {
 });
 
 function queryAllProducts() {
-  connection.query("SELECT * FROM products", function(err, res) {
+  connection.query("SELECT * FROM products", function (err, res) {
     for (var i = 0; i < res.length; i++) {
       console.log(res[i].item_id + " | " + res[i].product_name + " | $" + res[i].price);
     }
@@ -34,51 +34,54 @@ function queryAllProducts() {
 
 function processOrder() {
   // query the database for all items being auctioned
-  connection.query("SELECT * FROM bamazon.products", function(err, res) {
+  connection.query("SELECT * FROM bamazon.products", function (err, res) {
     if (err) throw err;
     // once you have the items, prompt the user for which they'd like to bid on
     inquirer.prompt([
-        {
-          name: "choice",
-          type: "input",
-          // choices: function() {
-          //   var orderArray = [];
-          //   for (var i = 0; i < res.length; i++) {
-          //     orderArray.push(res[i].product_name);
-          //   }
-          //   return orderArray;
-          // },
-          message: "What is the ID of the item you would like to place an order on?"
-        },
-        {
-          name: "quantity",
-          type: "input",
-          message: "How many of the items would you like to buy?"
-        }
-      ])
-      .then(function(answer) {
+      {
+        name: "choice",
+        type: "input",
+        message: "What is the ID of the item you would like to place an order on?"
+      },
+      {
+        name: "quantity",
+        type: "input",
+        message: "How many of the items would you like to buy?"
+      }
+    ])
+      .then(function (answer) {
 
-       var chosenId = answer.choice -1
-            var chosenProduct = res[chosenId]
-            var chosenQuantity = answer.quantity
-            if (chosenQuantity < res[chosenId].stock_quantity) {
-                console.log ("Order placed successfully!")
-                console.log("The total for " + answer.quantity + " " + res[chosenId].product_name + " is: $" + res[chosenId].price.toFixed(2) * chosenQuantity);
-    
+        var chosenId = answer.choice - 1
+        // var chosenId = answer.choice
+        var chosenProduct = res[chosenId]
+        var chosenQuantity = answer.quantity
 
-                connection.query("UPDATE products SET ? WHERE ?", [{
-                    stock_quantity: res[chosenId].stock_quantity - chosenQuantity
-                }, {
-                    id: res[chosenId].id
-                }], function(err, res) {
-                    //console.log(err);
-                    processOrder();
-                });
+        if (chosenQuantity < chosenProduct.stock_quantity) {
+          var new_stock = parseInt(chosenProduct.stock_quantity) - parseInt(chosenQuantity);
+          // console.log(new_stock);
+          // console.log(chosenId + 1);
+          // console.log("Order placed successfully!");
+          console.log("The total for " + answer.quantity + " " + chosenProduct.product_name + " is: $" + chosenProduct.price.toFixed(2) * chosenQuantity);
 
-            } else {
-                console.log("Sorry, insufficient Quanity! There are only " + res[chosenId].stock_quantity + " in stock.");
-                processOrder();
+          connection.query(
+            "UPDATE bamazon.products SET ? WHERE ?",
+            [{
+              // stock_quantity: res[chosenId].stock_quantity - parseInt(chosenQuantity)
+              stock_quantity: new_stock
+            },
+            {
+              item_id: chosenProduct.item_id
             }
-        })
-    })
+            ], function (error) {
+              if (error) throw err;
+              console.log("Order placed successfully!");
+              processOrder();
+            });
+          // console.log("Items left " + chosenProduct.stock_quantity + " in stock.");
+        } else {
+          console.log("Sorry, insufficient Quanity! There are only " + chosenProduct.stock_quantity + " in stock.");
+          processOrder();
+        }
+      })
+  })
 }
