@@ -56,7 +56,7 @@ function processOrder() {
         var chosenProduct = res[chosenId]
         var chosenQuantity = answer.quantity
 
-        if (chosenQuantity < chosenProduct.stock_quantity) {
+        if (chosenQuantity <= chosenProduct.stock_quantity) {
           var new_stock = parseInt(chosenProduct.stock_quantity) - parseInt(chosenQuantity);
           // console.log(new_stock);
           // console.log(chosenId + 1);
