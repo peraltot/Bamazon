@@ -21,6 +21,7 @@ connection.connect(function (err) {
 
 function queryAllProducts() {
   connection.query("SELECT * FROM products", function (err, res) {
+    console.log('ID | Product | Price');
     for (var i = 0; i < res.length; i++) {
       console.log(res[i].item_id + " | " + res[i].product_name + " | $" + res[i].price);
     }
