@@ -1,6 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-
+var colors = require("colors/safe");
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -62,7 +62,7 @@ function processOrder() {
           // console.log(new_stock);
           // console.log(chosenId + 1);
           // console.log("Order placed successfully!");
-          console.log("The total for " + answer.quantity + " " + chosenProduct.product_name + " is: $" + chosenProduct.price.toFixed(2) * chosenQuantity);
+          console.log(colors.green("The total for " + answer.quantity + " " + chosenProduct.product_name + " is: $" + chosenProduct.price.toFixed(2) * chosenQuantity));
 
           connection.query(
             "UPDATE bamazon.products SET ? WHERE ?",
@@ -75,12 +75,12 @@ function processOrder() {
             }
             ], function (error) {
               if (error) throw err;
-              console.log("Order placed successfully!");
+              console.log(colors.green("Order placed successfully!"));
               processOrder();
             });
           // console.log("Items left " + chosenProduct.stock_quantity + " in stock.");
         } else {
-          console.log("Sorry, insufficient Quanity! There are only " + chosenProduct.stock_quantity + " in stock.");
+          console.log(colors.red("Sorry, insufficient Quanity! There are only " + chosenProduct.stock_quantity + " in stock."));
           processOrder();
         }
       })
