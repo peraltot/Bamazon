@@ -39,12 +39,12 @@ function processOrder() {
       {
         name: "choice",
         type: "input",
-        message: "What is the ID of the item you would like to place an order on?"
+        message: "What is the ID of the animal you would like to place an order on?"
       },
       {
         name: "quantity",
         type: "input",
-        message: "How many of the items would you like to buy?"
+        message: "How many of the animal(s) would you like to buy?"
       }
     ])
       .then(function (answer) {
