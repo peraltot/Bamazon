@@ -1,6 +1,8 @@
 # Bamazon
 Zoo animals
 
+You can watch the video: Bamazon_TP_video
+
 ## Description
 
 This application implements a basic node accessible SQL database where the user is shown an inventory of animals and prompted on which they would like to purchase.
